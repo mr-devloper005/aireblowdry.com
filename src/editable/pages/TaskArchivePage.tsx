@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
-import { ArrowRight, Bookmark, BriefcaseBusiness, Building2, Camera, Download, FileText, Filter, Image as ImageIcon, MapPin, Megaphone, Search, UserRound } from 'lucide-react'
+import { ArrowRight, Bookmark, BriefcaseBusiness, Building2, Camera, Download, FileText, Filter, MapPin, Megaphone, Search, UserRound } from 'lucide-react'
 import { buildTaskMetadata } from '@/lib/seo'
 import { CATEGORY_OPTIONS, normalizeCategory } from '@/lib/categories'
 import { fetchPaginatedTaskPosts, buildPostUrl } from '@/lib/task-data'
@@ -58,10 +58,10 @@ const taskDeck: Record<TaskKey, { icon: typeof FileText; archiveClass: string; p
   article: { icon: FileText, archiveClass: 'grid gap-5 md:grid-cols-2 xl:grid-cols-3', promise: 'Readable editorial cards with room for headlines and excerpts.', badge: 'Read' },
   listing: { icon: Building2, archiveClass: 'grid gap-5 xl:grid-cols-2', promise: 'Directory cards highlight company identity, location, contacts, and service details.', badge: 'Business' },
   classified: { icon: Megaphone, archiveClass: 'grid gap-5 xl:grid-cols-2', promise: 'Offer-board cards prioritize price, location, condition, and quick action.', badge: 'Offer' },
-  image: { icon: Camera, archiveClass: 'columns-1 gap-5 space-y-5 md:columns-2 xl:columns-3', promise: 'Gallery-first browsing with strong visuals and compact captions.', badge: 'Gallery' },
+  image: { icon: Camera, archiveClass: 'grid items-start gap-6 md:grid-cols-2 xl:grid-cols-3', promise: 'Gallery-first browsing with strong visuals and compact captions.', badge: 'Gallery' },
   sbm: { icon: Bookmark, archiveClass: 'grid gap-4 md:grid-cols-2 xl:grid-cols-3', promise: 'Bookmark cards stay mostly text-based so saved resources scan quickly.', badge: 'Bookmark' },
   pdf: { icon: Download, archiveClass: 'grid gap-5 md:grid-cols-2 xl:grid-cols-3', promise: 'Document cards surface file context, download intent, and summary.', badge: 'PDF' },
-  profile: { icon: UserRound, archiveClass: 'grid gap-5 md:grid-cols-2 xl:grid-cols-4', promise: 'Profile cards focus on identity, short bio, and direct discovery.', badge: 'Profile' },
+  profile: { icon: UserRound, archiveClass: 'grid gap-6 md:grid-cols-2 xl:grid-cols-3', promise: 'Profile cards focus on identity, short bio, and direct discovery.', badge: 'Profile' },
 }
 
 export async function EditableTaskArchiveRoute({
@@ -89,31 +89,38 @@ export function TaskArchiveView({ task, posts, pagination, category, basePath }:
   const label = taskConfig?.label || task
   const deck = taskDeck[task]
   const Icon = deck.icon
-  const archiveVars = { '--archive-bg': preset.colors.background, '--archive-text': preset.colors.foreground, '--archive-surface': preset.colors.surface, '--archive-accent': preset.colors.accent } as CSSProperties
+  const archiveVars = {
+    '--archive-bg': task === 'image' ? '#f3efec' : preset.colors.background,
+    '--archive-text': task === 'image' ? '#2b2220' : preset.colors.foreground,
+    '--archive-surface': task === 'image' ? '#efe4d8' : preset.colors.surface,
+    '--archive-accent': task === 'image' ? '#5C766D' : preset.colors.accent,
+  } as CSSProperties
   const categoryLabel = category === 'all' ? 'All categories' : CATEGORY_OPTIONS.find((item) => item.slug === category)?.name || category
+  const isImage = task === 'image'
+  const isProfile = task === 'profile'
 
   return (
     <EditableSiteShell>
-      <main style={archiveVars} className="bg-[var(--archive-bg)] text-[var(--archive-text)]">
+      <main style={archiveVars} className={`bg-[var(--archive-bg)] text-[var(--archive-text)] ${isImage ? 'selection:bg-[#c9996b]/30' : ''}`}>
         <section className="mx-auto grid max-w-[var(--editable-container)] gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-20">
-          <div className="rounded-[2.5rem] border border-[var(--editable-border)] bg-[var(--archive-surface)] p-7 shadow-[0_24px_80px_rgba(15,23,42,0.08)] sm:p-10">
+          <div className={`rounded-[2.5rem] border p-7 shadow-[0_24px_80px_rgba(15,23,42,0.08)] sm:p-10 ${isImage || isProfile ? 'border-[#d7ccc5] bg-[#efe4d8]' : 'border-[var(--editable-border)] bg-[var(--archive-surface)]'}`}>
             <div className="inline-flex items-center gap-2 rounded-full border border-[var(--editable-border)] bg-white/70 px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-[var(--archive-accent)]"><Icon className="h-4 w-4" /> {label}</div>
-            <h1 className="mt-5 max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.07em] sm:text-6xl">{voice?.headline || `Browse ${label}`}</h1>
-            <p className="mt-6 max-w-2xl text-base leading-8 opacity-70">{voice?.description || SITE_CONFIG.description}</p>
-            <div className="mt-6 rounded-[1.5rem] border border-[var(--editable-border)] bg-white/55 p-4 text-sm font-bold leading-7 opacity-75">{deck.promise}</div>
+            <h1 className={`mt-5 max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.07em] sm:text-6xl ${isImage || isProfile ? 'text-[#2b2220]' : ''}`}>{voice?.headline || `Browse ${label}`}</h1>
+            <p className={`mt-6 max-w-2xl text-base leading-8 ${isImage || isProfile ? 'text-[#5C4F4A]' : 'opacity-70'}`}>{voice?.description || SITE_CONFIG.description}</p>
+            <div className={`mt-6 rounded-[1.5rem] border p-4 text-sm font-bold leading-7 ${isImage || isProfile ? 'border-[#d7ccc5] bg-white text-[#5C4F4A]' : 'border-[var(--editable-border)] bg-white/55 opacity-75'}`}>{deck.promise}</div>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href={basePath} className="rounded-full bg-[var(--archive-text)] px-5 py-3 text-sm font-black text-[var(--archive-bg)]">Browse all</Link>
+              <Link href={basePath} className={`rounded-full px-5 py-3 text-sm font-black ${isImage || isProfile ? 'bg-[#5C4F4A] text-white' : 'bg-[var(--archive-text)] text-[var(--archive-bg)]'}`}>Browse all</Link>
               <Link href="/search" className="rounded-full border border-[var(--editable-border)] px-5 py-3 text-sm font-black">Search posts</Link>
             </div>
           </div>
 
-          <form action={basePath} className="self-end rounded-[2rem] border border-[var(--editable-border)] bg-white/70 p-5 shadow-sm backdrop-blur">
+          <form action={basePath} className={`self-end rounded-[2rem] border p-5 shadow-sm backdrop-blur ${isImage || isProfile ? 'border-[#d7ccc5] bg-white' : 'border-[var(--editable-border)] bg-white/70'}`}>
             <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] opacity-55"><Filter className="h-4 w-4" /> Filter</div>
             <select name="category" defaultValue={category} className="mt-4 h-12 w-full rounded-2xl border border-[var(--editable-border)] bg-white px-4 text-sm font-bold outline-none">
               <option value="all">All categories</option>
               {CATEGORY_OPTIONS.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}
             </select>
-            <button className="mt-3 h-12 w-full rounded-2xl bg-[var(--archive-text)] text-sm font-black text-[var(--archive-bg)]">Apply</button>
+            <button className={`mt-3 h-12 w-full rounded-2xl text-sm font-black ${isImage || isProfile ? 'bg-[#5C4F4A] text-white' : 'bg-[var(--archive-text)] text-[var(--archive-bg)]'}`}>Apply</button>
             <p className="mt-3 text-xs font-bold opacity-55">Showing: {categoryLabel}</p>
           </form>
         </section>
@@ -132,9 +139,9 @@ export function TaskArchiveView({ task, posts, pagination, category, basePath }:
           )}
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-            {pagination.hasPrevPage ? <Link href={pageHref(basePath, category, page - 1)} className="rounded-full border border-[var(--editable-border)] bg-white px-5 py-3 text-sm font-black">Previous</Link> : null}
-            <span className="rounded-full bg-[var(--archive-text)] px-5 py-3 text-sm font-black text-[var(--archive-bg)]">Page {page} of {pagination.totalPages || 1}</span>
-            {pagination.hasNextPage ? <Link href={pageHref(basePath, category, page + 1)} className="rounded-full border border-[var(--editable-border)] bg-white px-5 py-3 text-sm font-black">Next</Link> : null}
+            {pagination.hasPrevPage ? <Link href={pageHref(basePath, category, page - 1)} className={`rounded-full border px-5 py-3 text-sm font-black ${isImage ? 'border-[#d7ccc5] bg-white text-[#2b2220]' : 'border-[var(--editable-border)] bg-white'}`}>Previous</Link> : null}
+            <span className={`rounded-full px-5 py-3 text-sm font-black ${isImage ? 'bg-[#5C4F4A] text-white' : 'bg-[var(--archive-text)] text-[var(--archive-bg)]'}`}>Page {page} of {pagination.totalPages || 1}</span>
+            {pagination.hasNextPage ? <Link href={pageHref(basePath, category, page + 1)} className={`rounded-full border px-5 py-3 text-sm font-black ${isImage ? 'border-[#d7ccc5] bg-white text-[#2b2220]' : 'border-[var(--editable-border)] bg-white'}`}>Next</Link> : null}
           </div>
         </section>
       </main>
@@ -224,15 +231,17 @@ function ClassifiedArchiveCard({ post, href }: { post: SitePost; href: string })
 function ImageArchiveCard({ post, href, index }: { post: SitePost; href: string; index: number }) {
   const image = getImage(post)
   return (
-    <Link href={href} className="group mb-5 block break-inside-avoid overflow-hidden rounded-[2rem] border border-[var(--editable-border)] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-      <div className={index % 3 === 0 ? 'aspect-[3/4]' : 'aspect-[4/3]'}>
-        <img src={image} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-      </div>
-      <div className="p-5">
-        <div className="inline-flex items-center gap-2 rounded-full bg-[var(--archive-bg)] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em]"><ImageIcon className="h-3 w-3" /> Visual</div>
-        <h2 className="mt-4 line-clamp-3 text-xl font-black leading-tight tracking-[-0.04em]">{post.title}</h2>
-      </div>
-    </Link>
+    <Link href={href} className="group block overflow-hidden rounded-[2rem] border border-[#d7ccc5] bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <article>
+        <div className={index % 3 === 0 ? 'aspect-[4/5]' : 'aspect-[4/3]'}>
+          <img src={image} alt="" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
+        </div>
+        <div className="bg-[#efe4d8] p-5">
+          <h2 className="line-clamp-2 text-2xl font-black leading-tight text-[#2b2220]">{post.title}</h2>
+          <p className="mt-2 line-clamp-2 text-sm text-[#5C4F4A]">{getSummary(post)}</p>
+        </div>
+      </article>
+      </Link>
   )
 }
 
@@ -270,13 +279,17 @@ function ProfileArchiveCard({ post, href }: { post: SitePost; href: string }) {
   const avatar = getImages(post)[0]
   const role = getField(post, ['role', 'designation', 'company', 'location'])
   return (
-    <Link href={href} className="group rounded-[2rem] border border-[var(--editable-border)] bg-white p-6 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-      <div className="mx-auto flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-[var(--archive-bg)] ring-1 ring-[var(--editable-border)]">
-        {avatar ? <img src={avatar} alt="" className="h-full w-full object-cover" /> : <UserRound className="h-10 w-10 opacity-45" />}
+    <Link href={href} className="group rounded-[2rem] border border-[var(--editable-border)] bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+      <div className="grid items-center gap-4 sm:grid-cols-[84px_1fr]">
+        <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-[#efe4d8] ring-1 ring-[var(--editable-border)]">
+          {avatar ? <img src={avatar} alt="" className="h-full w-full object-cover" /> : <UserRound className="h-8 w-8 opacity-45" />}
+        </div>
+        <div className="min-w-0">
+          <h2 className="line-clamp-2 text-2xl font-black leading-tight tracking-[-0.04em] text-[#2b2220]">{post.title}</h2>
+          {role ? <p className="mt-1 line-clamp-1 text-sm font-semibold text-[#5C766D]">{role}</p> : null}
+        </div>
       </div>
-      <h2 className="mt-5 text-xl font-black leading-tight tracking-[-0.04em]">{post.title}</h2>
-      {role ? <p className="mt-2 text-xs font-black uppercase tracking-[0.16em] text-[var(--archive-accent)]">{role}</p> : null}
-      <p className="mt-4 line-clamp-3 text-sm leading-6 opacity-65">{getSummary(post)}</p>
+      <p className="mt-4 line-clamp-3 text-sm leading-6 text-[#5C4F4A]">{getSummary(post)}</p>
     </Link>
   )
 }
