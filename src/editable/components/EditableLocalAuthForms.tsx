@@ -30,8 +30,8 @@ const saveSession = (user: Pick<LocalUser, 'name' | 'email'>) => {
   window.dispatchEvent(new Event('slot4-auth-change'))
 }
 
-const inputClass = 'h-12 rounded-2xl border border-[var(--editable-border)] bg-white/85 px-4 text-base font-bold text-current outline-none transition placeholder:text-current/35 focus:border-current focus:bg-white'
-const buttonClass = 'inline-flex h-12 items-center justify-center rounded-2xl bg-current px-6 text-sm font-black uppercase tracking-[0.22em] text-white transition hover:-translate-y-0.5 disabled:opacity-60'
+const inputClass = 'h-12 rounded-2xl border border-[#d7ccc5] bg-white px-4 text-base font-semibold text-[#2b2220] outline-none transition placeholder:text-[#5C4F4A]/60 focus:border-[#5C766D] focus:ring-2 focus:ring-[#5C766D]/20'
+const buttonClass = 'inline-flex h-12 items-center justify-center rounded-2xl bg-[#5C4F4A] px-6 text-sm font-black uppercase tracking-[0.18em] text-white transition hover:-translate-y-0.5 hover:bg-[#4d413d] disabled:opacity-60'
 
 export function EditableLocalLoginForm() {
   const router = useRouter()
@@ -46,12 +46,12 @@ export function EditableLocalLoginForm() {
     const user = readUsers().find((item) => item.email.toLowerCase() === normalizedEmail)
     if (!user || user.password !== password) {
       setStatus('error')
-      setMessage('No local account found with these details. Create an account first, then login.')
+      setMessage('No account found with these details. Create an account first, then login.')
       return
     }
     saveSession(user)
     setStatus('success')
-    setMessage(`Logged in locally as ${user.name}. Redirecting...`)
+    setMessage(`Logged in as ${user.name}. Redirecting...`)
     window.setTimeout(() => router.push('/'), 500)
   }
 
@@ -60,7 +60,7 @@ export function EditableLocalLoginForm() {
       <input className={inputClass} type="email" placeholder="Email address" value={email} onChange={(event) => setEmail(event.target.value)} required />
       <input className={inputClass} type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} required />
       {message ? <p className={`rounded-2xl px-4 py-3 text-sm font-bold ${status === 'success' ? 'bg-emerald-50 text-emerald-800' : 'bg-red-50 text-red-700'}`}>{message}</p> : null}
-      <button type="submit" className={buttonClass}>Continue</button>
+      <button type="submit" className={buttonClass}>Submit Login</button>
     </form>
   )
 }
@@ -92,7 +92,7 @@ export function EditableLocalSignupForm() {
     saveUsers([nextUser, ...users.filter((item) => item.email.toLowerCase() !== normalizedEmail)])
     saveSession(nextUser)
     setStatus('success')
-    setMessage('Local account created. Redirecting...')
+    setMessage('Account created. Redirecting...')
     window.setTimeout(() => router.push('/'), 500)
   }
 
@@ -102,7 +102,7 @@ export function EditableLocalSignupForm() {
       <input className={inputClass} type="email" placeholder="Email address" value={email} onChange={(event) => setEmail(event.target.value)} required />
       <input className={inputClass} type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} required />
       {message ? <p className={`rounded-2xl px-4 py-3 text-sm font-bold ${status === 'success' ? 'bg-emerald-50 text-emerald-800' : 'bg-red-50 text-red-700'}`}>{message}</p> : null}
-      <button type="submit" className={buttonClass}>Start now</button>
+      <button type="submit" className={buttonClass}>Submit Register</button>
     </form>
   )
 }
