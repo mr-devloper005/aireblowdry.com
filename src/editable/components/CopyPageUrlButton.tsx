@@ -20,7 +20,7 @@ export function CopyPageUrlButton() {
     <button
       type="button"
       onClick={onShare}
-      className="inline-flex items-center gap-2 rounded-full border border-[#d7ccc5] bg-white px-4 py-2 text-sm font-black text-[#2b2220] hover:bg-[#efe4d8]"
+      className="inline-flex items-center gap-2 rounded-full border border-black/[0.06] bg-[var(--slot4-surface-bg)] px-4 py-2 text-sm font-extrabold text-[var(--slot4-page-text)] hover:bg-[var(--slot4-accent-soft)]"
     >
       <Share2 className="h-4 w-4" />
       {copied ? 'Copied' : 'Share'}

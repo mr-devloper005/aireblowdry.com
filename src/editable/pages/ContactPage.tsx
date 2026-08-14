@@ -8,10 +8,10 @@ import { EditableContactLeadForm } from '@/editable/components/EditableContactLe
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 
 const tone = {
-  shell: 'bg-[#f3efec] text-[#2b2220]',
-  panel: 'border border-[#d7ccc5] bg-white',
-  soft: 'border border-[#d7ccc5] bg-[#efe4d8]',
-  muted: 'text-[#5C4F4A]',
+  shell: 'bg-[var(--slot4-warm)] text-[var(--slot4-page-text)]',
+  panel: 'border border-black/[0.06] bg-[var(--slot4-surface-bg)]',
+  soft: 'border border-black/[0.06] bg-[var(--slot4-accent-soft)]',
+  muted: 'text-[var(--slot4-muted-text)]',
 }
 
 export default function ContactPage() {
@@ -48,14 +48,14 @@ export default function ContactPage() {
       <main className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <section className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-[#5C766D]">{pagesContent.contact.eyebrow}</p>
-            <h1 className="mt-4 text-5xl font-semibold tracking-[-0.05em] text-[#2b2220]">{pagesContent.contact.title}</h1>
+            <p className="text-xs font-extrabold uppercase tracking-[0.24em] text-[var(--slot4-accent-fill)]">{pagesContent.contact.eyebrow}</p>
+            <h1 className="mt-4 text-5xl font-semibold tracking-[-0.05em] text-[var(--slot4-page-text)]">{pagesContent.contact.title}</h1>
             <p className={`mt-5 max-w-2xl text-sm leading-8 ${tone.muted}`}>{pagesContent.contact.description}</p>
             <div className="mt-8 space-y-4">
               {lanes.map((lane) => (
                 <div key={lane.title} className={`rounded-[1.6rem] p-5 ${tone.soft} shadow-sm`}>
-                  <lane.icon className="h-5 w-5 text-[#5C766D]" />
-                  <h2 className="mt-3 text-xl font-semibold text-[#2b2220]">{lane.title}</h2>
+                  <lane.icon className="h-5 w-5 text-[var(--slot4-accent-fill)]" />
+                  <h2 className="mt-3 text-xl font-semibold text-[var(--slot4-page-text)]">{lane.title}</h2>
                   <p className={`mt-2 text-sm leading-7 ${tone.muted}`}>{lane.body}</p>
                 </div>
               ))}
@@ -63,7 +63,7 @@ export default function ContactPage() {
           </div>
 
           <div className={`rounded-[2rem] p-7 ${tone.panel} shadow-sm`}>
-            <h2 className="text-2xl font-semibold text-[#2b2220]">{pagesContent.contact.formTitle}</h2>
+            <h2 className="text-2xl font-semibold text-[var(--slot4-page-text)]">{pagesContent.contact.formTitle}</h2>
             <EditableContactLeadForm />
           </div>
         </section>
